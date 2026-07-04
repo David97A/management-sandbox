@@ -1,0 +1,546 @@
+body {
+    background: #f4f7fc;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* =========================
+   TOP HEADER
+   ========================= */
+
+.top-banner {
+    background:
+      linear-gradient(
+        135deg,
+        #0f2d69,
+        #1f5fcf
+      );
+    color: white;
+    padding: 30px 50px;
+    margin-bottom: 40px;
+    box-shadow:
+      0 4px 20px rgba(0,0,0,.15);
+}
+
+.top-banner h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.top-banner p {
+    margin-top: 5px;
+    font-size: 18px;
+    opacity: .9;
+}
+
+/* =========================
+   MAIN CARD
+   ========================= */
+
+.replication-card {
+    background: white;
+    max-width: 1100px;
+    margin: auto;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow:
+      0 10px 40px rgba(0,0,0,.08);
+}
+
+/* =========================
+   SECTION TITLE
+   ========================= */
+
+.replication-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #13294b;
+    margin-bottom: 10px;
+}
+
+.replication-subtitle {
+    color: #687385;
+    margin-bottom: 40px;
+    font-size: 18px;
+}
+
+/* =========================
+   LABELS
+   ========================= */
+
+.control-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #22324f;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #d8dfe8;
+    height: 48px;
+    font-size: 15px;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: #2d7ff9;
+    box-shadow:
+      0 0 0 4px rgba(45,127,249,.15);
+}
+
+/* =========================
+   SELECTIZE
+   ========================= */
+
+.selectize-input {
+    border-radius: 10px !important;
+    min-height: 48px;
+    padding-top: 12px;
+    border-color: #d8dfe8 !important;
+}
+
+/* =========================
+   ACTION PANELS
+   ========================= */
+
+.action-panel {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #e7edf5;
+}
+
+.action-panel h4 {
+    margin-top: 0;
+    color: #1b2c4b;
+    font-weight: 600;
+}
+
+.action-panel p {
+    color: #6b7688;
+}
+
+/* =========================
+   VALIDATION BUTTON
+   ========================= */
+
+#cstmReplValidationBttn {
+    background:
+      linear-gradient(
+        135deg,
+        #2d7ff9,
+        #1b66e3
+      );
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 600;
+    width: 100%;
+}
+
+#cstmReplValidationBttn:hover {
+    transform: translateY(-2px);
+    transition: .2s;
+}
+
+/* =========================
+   EXECUTION BUTTON
+   ========================= */
+
+#cstmReplExecutionBttn {
+    background:
+      linear-gradient(
+        135deg,
+        #00a86b,
+        #00c17c
+      );
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 700;
+    width: 100%;
+    box-shadow:
+      0 8px 20px rgba(0,168,107,.25);
+}
+
+#cstmReplExecutionBttn:hover {
+    transform: translateY(-2px);
+    transition: .2s;
+}
+
+/* =========================
+   DATE PANELS
+   ========================= */
+
+.date-panel {
+    background: #f9fbfd;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e5edf7;
+    margin-top: 15px;
+}
+
+.validation-panel {
+    background: #eef5ff;
+    border: 1px solid #d9e8ff;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.validation-panel h4 {
+    color: #1b3d6d;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.validation-panel p {
+    color: #65748b;
+    margin-bottom: 0;
+}
+
+#cstmReplValidationBttn {
+    width: 100%;
+    margin-top: 10px;
+    background:
+      linear-gradient(
+        135deg,
+        #2d7ff9,
+        #1f63d3
+      );
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+}
+
+.execution-panel {
+    background: #eefaf5;
+    border: 1px solid #d5f0e3;
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.execution-panel h4 {
+    color: #10633f;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.execution-panel p {
+    color: #65748b;
+    margin-bottom: 0;
+}
+
+#cstmReplExecutionBttn {
+    width: 100%;
+    margin-top: 10px;
+    background:
+      linear-gradient(
+        135deg,
+        #00a86b,
+        #00995f
+      );
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    box-shadow:
+      0 5px 15px rgba(0,168,107,.25);
+}
+
+.modal-content {
+
+    border-radius: 18px;
+
+    border: none;
+
+    box-shadow:
+
+      0 20px 60px rgba(0,0,0,.18);
+
+}
+
+.modal-header {
+
+    background:
+
+      linear-gradient(
+
+        135deg,
+
+        #0f2d69,
+
+        #1f5fcf
+
+      );
+
+    color: white;
+
+    border-top-left-radius: 18px;
+
+    border-top-right-radius: 18px;
+
+}
+
+.modal-title {
+
+    font-weight: 600;
+
+}
+
+.validation-result {
+
+    padding: 10px;
+
+}
+
+.validation-result h4 {
+
+    font-weight: 600;
+
+    margin-bottom: 20px;
+
+}
+
+.validation-result ul {
+
+    padding-left: 20px;
+
+}
+
+.validation-result li {
+
+    margin-bottom: 8px;
+
+    color: #44546a;
+
+}
+
+.modal-footer .btn-default {
+
+    border-radius: 10px;
+
+}
+
+.modal-footer .btn-default {
+
+    background: #1f5fcf;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 8px 18px;
+
+}
+
+.replication-confirmation {
+
+    padding: 10px;
+
+}
+
+.replication-confirmation h4 {
+
+    color: #1b3d6d;
+
+    font-weight: 600;
+
+    margin-bottom: 20px;
+
+}
+
+.replication-summary-table {
+
+    width: 100%;
+
+    margin-bottom: 20px;
+
+    border-collapse: collapse;
+
+}
+
+.replication-summary-table td {
+
+    padding: 12px;
+
+    border-bottom: 1px solid #e8edf5;
+
+}
+
+.replication-summary-table td:first-child {
+
+    font-weight: 600;
+
+    color: #4b5d73;
+
+    width: 35%;
+
+}
+
+.replication-confirmation h5 {
+
+    color: #d97706;
+
+    font-weight: 600;
+
+}
+
+.replication-confirmation ul {
+
+    margin-top: 10px;
+
+}
+
+.replication-confirmation li {
+
+    color: #4b5d73;
+
+    margin-bottom: 8px;
+
+}
+
+#confirmReplicaExecution {
+
+    background:
+
+      linear-gradient(
+
+        135deg,
+
+        #00a86b,
+
+        #00995f
+
+      );
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: white;
+
+    font-weight: 600;
+
+    padding: 10px 18px;
+
+    box-shadow:
+
+      0 4px 12px rgba(
+
+        0,
+
+        168,
+
+        107,
+
+        .25
+
+      );
+
+}
+
+.modal-header {
+
+    background:
+
+      linear-gradient(
+
+        135deg,
+
+        #0f2d69,
+
+        #1f5fcf
+
+      );
+
+    color: white;
+
+}
+
+.replication-result {
+
+    padding: 10px;
+}
+
+.replication-result h4 {
+
+    color: #00a86b;
+
+    font-weight: 600;
+
+    margin-bottom: 20px;
+
+}
+
+.replication-metric-card {
+
+    background:
+      linear-gradient(
+        135deg,
+        #eefaf5,
+        #e4f7ee
+      );
+
+    border:
+      1px solid #d5f0e3;
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    margin-bottom: 20px;
+}
+
+.replication-metric-card h2 {
+
+    color: #00a86b;
+
+    font-size: 42px;
+
+    font-weight: 700;
+
+    margin: 0;
+
+}
+
+.replication-metric-card p {
+
+    color: #4b5d73;
+
+    font-size: 15px;
+
+    margin-top: 5px;
+
+    margin-bottom: 0;
+}
+
+.replication-execution-time {
+
+    text-align: center;
+
+    color: #5f6f84;
+
+    font-size: 14px;
+
+}
