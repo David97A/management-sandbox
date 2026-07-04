@@ -28,6 +28,34 @@ configParamsSourceConn <- list(
   user = "postgres"
 )
 
+getSchemasConnection <- dbConnect(
+  RPostgres::Postgres(),
+  host = configParamsSourceConn$host,
+  port = configParamsSourceConn$port,
+  dbname = configParamsSourceConn$dbname,
+  user = configParamsSourceConn$user
+)
+
+################################
+# Existing Schemas in Source DB
+################################
+
+schemasList <- dbGetQuery(getSchemasConnection,
+                    '
+SELECT 
+nspname AS schema_name
+FROM 
+pg_catalog.pg_namespace
+WHERE
+nspname NOT LIKE \'%pg_%\'
+AND nspname NOT IN (\'information_schema\', \'public\')
+ORDER BY 
+schema_name;
+    '
+)
+
+dbDisconnect(getSchemasConnection)
+
 ############################
 # Pop-Up Displays Functions
 ############################
