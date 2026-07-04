@@ -53,7 +53,7 @@ app_ui <- bslib::page_fluid(
                  icon("database"),
                  " Schema Name"
                ),
-               choices = c("Operations", "Sales", "Compliance", "BusinessSupport"),
+               choices = as.list(schemasList$schema_name),
                multiple = FALSE
              ))),
     
