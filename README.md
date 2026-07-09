@@ -43,7 +43,7 @@ For the Analytical Ecosystem, it is assumed that the Production and Sandbox data
 
 ## The "Bank of Trust" example and the Analytical Model
 
-Using the [BIAN Service Domain Landscape](https://bian.org/servicelandscape-12-0-0/views/view_51891.html) and Kimball's Dimensional Aproach [^1] as a reference for Designing our Relational Data Model for a fictitional Banking Institution called "Bank of Trust", we can test our application on the following objects:
+Using the [BIAN Service Domain Landscape](https://bian.org/servicelandscape-12-0-0/views/view_51891.html) and Kimball's Dimensional Aproach [^1] as a reference for Designing our Relational Data Model for a fictional Banking Institution called "Bank of Trust", we can test our application on the following objects:
 
 ### ERD Diagram
 
@@ -64,23 +64,23 @@ Using the [BIAN Service Domain Landscape](https://bian.org/servicelandscape-12-0
 - ConsumerLoanData (Fact Table): Store the Oustanding Balance at the end of the Month for the Loan Accounts of the Customers in the BoT.
 - CreditCardsTransactions (Fact Table): Store the information of the Daily Transactions that are made by the customers specifically for the Credit Card product.
 
-## Initial Configuration
+### Initial Configuration for the Analytical Instances
 
 As we are working on the idea of three separate PostgreSQL instances (two for the Analytical Databses and one for the Application Database), we'll need to configure three ODBC connections for the application. If you want to try the functionality of the app in you local environment, you can download and install three PostgreSQL versions from the [official site](https://www.postgresql.org/download/) and assign each version a different port or use [Docker's PostgreSQL Image](https://hub.docker.com/_/postgres) to configure three different containers.
 
-### Analytical Model - Creation.
+### Creation of the DB Objects.
 
 [Analytical Model DDL Scripts](sql/ddl/analytical-model)
 
-Once we have our PostgreSQL instances running, we proceed to create the Analytical Data Models following this instructions:
+Once we have our PostgreSQL analytical instances running, we proceed to create the Analytical Data Models following the next instructions:
 
-1. Create the Database with the CREATE_DB_bot-datacenter.sql script, in each instance.
-2. Create the Schemas with the CREATE_SCHEMAS.sql script, in each database.
+1. Create the Database with the CREATE_DB_bot-datacenter.sql script, in each analytical instance.
+2. Change the connection to the new databases to create the Schemas with the CREATE_SCHEMAS.sql script.
 3. For each instance, run the following scripts to create the Tables:
   - For the creation of the Data Model in the "Production" environment, run the CREATE_TABLES_AnalyticalModel_Production.sql script.
-  - For the creation of the Data Model in the "Sandbox" environment, run the CREATE_TABLES_AnalyticalModel_Sandbox.sql script.
-
-### Analytical Model - Privileges Configuration.
+  - For the creation of the Data Model in the "Sandbox" environment, run the CREATE_TABLES_AnalyticalModel_Sandbox.sql script. For the Sandbox Model, we omit the creation of Foreign Keys in the Fact Tables since we may constantly overwrite information in the Dimension Tables (deleting everything and inserting the new information), causing dependency errors.
+    
+### Privileges Configuration.
 
 [Analytical Model DCL Scripts](sql/dcl/analytical-model)
 
@@ -104,6 +104,35 @@ CREATE ROLE user_name WITH LOGIN PASSWORD 'password';
 
 Once you generated the Database Role, run the other commands to give the corresponding "read / write" privileges.
 
+## The Application Model.
+
+The application Data Model will store the following relevant information to enable the security functions of the app and the connections to the analytical instances:
+
+- The username that will be requested to log in to the app.
+- The password that will be requested to log in to the app (encrypted using pgcrypto).
+- The type of role (ADMIN, DEVELOPER, etc).
+- A boolean value to indicate if the role is Active (true / false).
+- The database role (only the user name) that will be used to connect to the analytical Production instance (the one that was configured with the ROLE_CONFIGURATION_Production.sql script).
+- The database role (only the user name) that will be used to connect to the analytical Sandbox instance (the one that was configured with the ROLE_CONFIGURATION_Sandbox.sql script).
+
+We will not include in this table the passwords we configured for the database roles in each analytical instance, since we can store them in the pgpass.conf file. This is a secure strategy that we can follow to avoid declaring our passwords in the application code.
+
+To store the passwords
+
+
+[Application Model DDL Scripts](sql/ddl/application-model)
+
+Once we have our Application's PostgreSQL instance running, we proceed to create its Data Model following the next instructions:
+
+1. Create the Database with the CREATE_DB_SandboxAppManagement.sql script.
+2. Change the connection to the new databases to create the Schemas with the CREATE_SCHEMA_AdminManagement.sql script.
+3. Create the Table that will store the credentials information with the CREATE_TABLE_AdminManagement-Sandbox_App_Users.sql script.
+
+### Application Model - Inserting Users Information.
+
+[Application Model DML Scripts](sql/dml/application-model)
+
+1. With the CREDENTIALS_CONFIGURATION.sql script, we're going to create the pgcrypto PostgreSQL extension and insert the
 
 ## References
 
