@@ -1,7 +1,7 @@
 # management-sandbox
 ## Shiny Application for Manage Replicas to a Sandbox Environment
 
-Developed using the [Shiny Package](https://shiny.posit.co) (a library which allow us to create Web Applications in R or Python languages) the main purpose of the "management-sandbox" app is to work as a Replication Data Hub to move Data from a Source Production Relational Database to a "mirror" environment called Sandbox.
+Developed using the [Shiny Package](https://shiny.posit.co) (a library that enables the creation of Web Applications using R or Python languages) the main purpose of the "management-sandbox" app is to work as a Replication Data Hub to move Data from a Source Production Relational Database to a "mirror" environment called Sandbox.
 
 This repository includes the code files that compose the Shiny Application, it's User Database and an Informational Example Data Base to test the functionalities of the Software.
 
@@ -31,13 +31,18 @@ Libraries versions:
 
 ## Introduction (Use case)
 
-Supposing that we have a Production Environment that hosts an Analytical Database that stores enterprise Data, and a Sandbox Environment that mirrors the Production instance to allow Data teams, such as Data Analysts and Data Scientists, to run "heavy-weight" tests for developing Models and Explorations without competing with the operational processes for computational resources, the "management-sandbox" app offers a solution to manage the data replications needed to maintain the Sandbox ecosystem up to date againts any updates in the information that could occur in Production.
+Consider an enterprise architecture composed of a Production Environment and a Sandbox Environment. The Production Environment hosts the organization’s operational database, which supports business reporting, enterprise applications, and day-to-day processes. The Sandbox Environment maintains a synchronized replica of this system, providing Data Analysts, Data Scientists, and other engineering teams with an isolated workspace for computationally intensive experimentation, model development, and data exploration without impacting production performance.
+
+The management-sandbox application automates and manages the replication workflows that synchronize the sandbox with production, ensuring that non-production environments remain current while minimizing operational risk and eliminating resource contention with production workloads.
 
 ## Architecture
 
-Initially, a 2 tier architecture is proposed for the application, having a PostgreSQL Database (SandboxAppManagement) where we're going to store the information related to user's credentials. This will enable to add a secure layer to the software requesting user name and password to the user who will use the application. The password values for each user will be encrypted using the [pgcrypto](https://www.postgresql.org/docs/current/pgcrypto.html) module, which is a PostgreSQL extension that "provides cryptographic functions".
+Initially, the application is designed around a two-tier architecture. The first tier consists of a PostgreSQL database (SandboxAppManagement) that stores user authentication and authorization information. This database provides an additional security layer by requiring users to authenticate before accessing the application. User passwords are securely encrypted using the [pgcrypto](https://www.postgresql.org/docs/current/pgcrypto.html) extension, which provides cryptographic functions for PostgreSQL. The second Tier will contain the source code of the Front-End design, the Back-End logic and the Global assets that the application need to function.
 
-For the Analytical Ecosystem, it is assumed that the Production and Sandbox databases are located on two different servers, so it would be necessary to ensure the communication between the application and both servers, and a ODBC connection for each database. Also, in each database will be created a Role with different privileges for the operations that the application can execute, ensuring that in the Production database can perform "Read-Only" transactions, meanwhile in the Sandbox environment it's allowed to perform "Read / Write" commands.
+For the analytical ecosystem, it is assumed that the Production and Sandbox databases reside on separate database servers. Consequently, the application must be able to communicate with both servers through independent ODBC connections.
+
+Additionally, a dedicated database role will be created in each environment with privileges aligned to the application’s operational requirements. In the Production environment, the role will be restricted to read-only operations to protect production data. In contrast, the role in the Sandbox environment will be granted read and write privileges, allowing the application to execute data replication and management tasks while maintaining the security and integrity of the Production environment.
+
 
 ![Application Architecture](assets/sandbox-management-hub-architecture.png)
 
@@ -70,7 +75,8 @@ As we are working on the idea of three separate PostgreSQL instances (two for th
 
 ### Creation of the DB Objects.
 
-[Analytical Model DDL Scripts](sql/ddl/analytical-model)
+- [Analytical Model DDL Scripts](sql/ddl/analytical-model)
+- [Analytical Model DML Scripts](sql/dml/analytical-model)
 
 Once we have our PostgreSQL analytical instances running, we proceed to create the Analytical Data Models following the next instructions:
 
@@ -79,10 +85,11 @@ Once we have our PostgreSQL analytical instances running, we proceed to create t
 3. For each instance, run the following scripts to create the Tables:
   - For the creation of the Data Model in the "Production" environment, run the CREATE_TABLES_AnalyticalModel_Production.sql script.
   - For the creation of the Data Model in the "Sandbox" environment, run the CREATE_TABLES_AnalyticalModel_Sandbox.sql script. For the Sandbox Model, we omit the creation of Foreign Keys in the Fact Tables since we may constantly overwrite information in the Dimension Tables (deleting everything and inserting the new information), causing dependency errors.
-    
+4. Connected to the Production instance, insert the dummy data using the SAMPLE_DATA_INSERTION_Production.sql script, located in the dml/analytical-model folder.
+
 ### Privileges Configuration.
 
-[Analytical Model DCL Scripts](sql/dcl/analytical-model)
+- [Analytical Model DCL Scripts](sql/dcl/analytical-model)
 
 1. With the ROLE_CONFIGURATION_Production.sql script, use the following line to create the Production Database Role choosing a username and password:
 
@@ -117,25 +124,95 @@ The application Data Model will store the following relevant information to enab
 
 We will not include in this table the passwords we configured for the database roles in each analytical instance, since we can store them in the pgpass.conf file. This is a secure strategy that we can follow to avoid declaring our passwords in the application code.
 
-To store the passwords
-
-
 [Application Model DDL Scripts](sql/ddl/application-model)
 
 Once we have our Application's PostgreSQL instance running, we proceed to create its Data Model following the next instructions:
 
 1. Create the Database with the CREATE_DB_SandboxAppManagement.sql script.
-2. Change the connection to the new databases to create the Schemas with the CREATE_SCHEMA_AdminManagement.sql script.
+2. Change the connection to the new database to create the Schema with the CREATE_SCHEMA_AdminManagement.sql script.
 3. Create the Table that will store the credentials information with the CREATE_TABLE_AdminManagement-Sandbox_App_Users.sql script.
 
 ### Application Model - Inserting Users Information.
 
 [Application Model DML Scripts](sql/dml/application-model)
 
-1. With the CREDENTIALS_CONFIGURATION.sql script, we're going to create the pgcrypto PostgreSQL extension and insert the
+1. With the CREDENTIALS_CONFIGURATION.sql script, we're going to create the pgcrypto PostgreSQL extension and insert the user's authentication information. In the next line of the script:
+
+``` SQL
+INSERT INTO "AdminManagement"."Sandbox_App_Users"
+("Username", "Password_hash", "Role", "Active", "SandBoxDBRole", "ProductionDBRole")
+VALUES 
+('user_name_login_app', 'user_pwd_login_app', 'ADMIN', true, 'user_name_destination_db', 'user_name_source_db');
+```
+we have to insert the values corresponding to the user name and pasword that the application will request for the log in to the "Username" and "Password_hash" columns.
+
+2. Update the value in the "Password_hash" column with the next line:
+
+``` SQL
+-- 2. Update the password value, using the function pgp_sym_encrypt, to encrypt the password value.
+
+UPDATE "AdminManagement"."Sandbox_App_Users"
+SET "Password_hash" = pgp_sym_encrypt(b."Password_hash", 'public-password', 'compress-algo=1, cipher-algo=aes256')
+FROM "AdminManagement"."Sandbox_App_Users" b
+WHERE "AdminManagement"."Sandbox_App_Users"."Username" = 'user_name_login_app';
+```
+declaring your user name in at the end of the WHERE clause filter.
+
+### Storing the Database passwords in pgpass.
+
+Depending on whether you're working on a Windows or Linux/macOS Set up, the following steps will guide you through the configuration of the pgpass file to store the passwords of each analytical dabase securily:
+
+#### Windows
+
+1. Press ```Win + R```, type ```%APP DATA%``` and press Enter.
+2. Look for a folder named ```postgresql```. If it doesn't exists, create it.
+3. Inside that new folder, create a .txt file named ```pgpass.conf```.
+4. Open the file in a text editor (Like Notepad) and add a line for each connection with the information of your credentials, following the next format:
+
+``` text
+# Connection to Production environment
+lochalhost:5432:bot-datacenter:username_production:password_production
+# Connection to Sandbox environment
+localhost:5433:bot-datacenter:username_sandbox:password_sandbox
+```
+#### Linux / macOS
+
+1. Open your Terminal and navigate to the home directory:
+
+``` bash
+cd ~
+```
+
+2. Create and open the pgpass file (it will be hiden)
+
+``` bash
+nano .pgpass
+```
+
+3. Once open, add a line for each connection with the information of your credentials, following the next format:
+
+``` text
+# Connection to Production environment
+lochalhost:5432:bot-datacenter:username_production:password_production
+# Connection to Sandbox environment
+localhost:5433:bot-datacenter:username_sandbox:password_sandbox
+```
+
+4. Since Linux and macOS will ignore the pgpass file configuration if its permissions are too broad, we have to run the next command to restrict them:
+
+´´´ bash
+chmod 0600 ~/.pgpass
+´´´
+
+You can test the passwords configuration by connecting to each database using ```psql```:
+
+``` bash
+psql -h localhost -p 5432 -d bot-datacenter  -U username_production
+```
+
+if it logs in immediately, the pgpass file is working correctly.
+
 
 ## References
 
 [^1]: Kimball, R., & Ross, M. (2002). The data warehouse toolkit (2nd edn). Nashville, TN: John Wiley & Sons.
-
-
