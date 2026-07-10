@@ -183,7 +183,7 @@ localhost:5433:bot-datacenter:username_sandbox:password_sandbox
 cd ~
 ```
 
-2. Create and open the pgpass file (it will be hiden)
+2. Create and open the pgpass file (it will be hidden)
 
 ``` bash
 nano .pgpass
@@ -200,9 +200,9 @@ localhost:5433:bot-datacenter:username_sandbox:password_sandbox
 
 4. Since Linux and macOS will ignore the pgpass file configuration if its permissions are too broad, we have to run the next command to restrict them:
 
-´´´ bash
+``` bash
 chmod 0600 ~/.pgpass
-´´´
+```
 
 You can test the passwords configuration by connecting to each database using ```psql```:
 
