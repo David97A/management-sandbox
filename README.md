@@ -89,11 +89,22 @@ The detailed process to configure the application Roles and Connections are avai
 
 ## Features
 
-- User authentication with encrypted credentials
 - Role-based access control
+
+![Auth Module](assets/application-demo-images/authentication-module.png)
+
 - Metadata validation before replication
+
+![Validation Module](assets/application-demo-images/table-validation-module.png)
+  
 - Automated table replication
+
+![Replication Module](assets/application-demo-images/replication-module.png)
+  
 - Execution summary with replication statistics
+
+![Replication Summary](assets/application-demo-images/replication-summary.png)
+  
 
 ## Feedback
 
