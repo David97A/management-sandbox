@@ -6,7 +6,7 @@ library(shiny)
 library(shinyjs)
 library(shinymanager)
 library(htmltools)
-library(bslib)
+
 library(shinyWidgets)
 library(tidyverse)
 library(DBI)
@@ -24,21 +24,19 @@ configParamsDestinationConn <- list(
 configParamsSourceConn <- list(
   host = "localhost",
   port = 5433,
-  dbname = "bot-datacenter",
-  user = "postgres"
-)
-
-getSchemasConnection <- dbConnect(
-  RPostgres::Postgres(),
-  host = configParamsSourceConn$host,
-  port = configParamsSourceConn$port,
-  dbname = configParamsSourceConn$dbname,
-  user = configParamsSourceConn$user
+  dbname = "bot-datacenter"
 )
 
 ################################
 # Existing Schemas in Source DB
 ################################
+
+assign("getSchemasConnection", 
+       dbConnect(RPostgres::Postgres(),
+                 host = configParamsSourceConn$host,
+                 port = configParamsSourceConn$port,
+                 dbname = configParamsSourceConn$dbname, 
+                 user = "postgres"))
 
 schemasList <- dbGetQuery(getSchemasConnection,
                     '
