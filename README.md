@@ -249,7 +249,7 @@ configParamsSourceConn <- list(
 )
 ```
 
-2. The connection parameters corresponding to the Application's Database has to be included inside the ```getAppUsers``` function, wich has the logic to extract the Database Roles' information once the User has been authenticated.
+2. The connection parameters corresponding to the Application's Database has to be included inside the ```getAppUsers``` function, which has the logic to extract the Database Roles' information once the User has been authenticated.
 
 ``` r
 getAppUsers <- function () {
