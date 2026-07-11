@@ -6,8 +6,8 @@ As we are working on the idea of three separate PostgreSQL instances (two for th
 
 ## Creation of the DB Objects.
 
-- [Analytical Model DDL Scripts](sql/ddl/analytical-model)
-- [Analytical Model DML Scripts](sql/dml/analytical-model)
+- [Analytical Model DDL Scripts](/sql/ddl/analytical-model)
+- [Analytical Model DML Scripts](/sql/dml/analytical-model)
 
 Once we have our PostgreSQL analytical instances running, we proceed to create the Analytical Data Models following the next instructions:
 
@@ -20,7 +20,7 @@ Once we have our PostgreSQL analytical instances running, we proceed to create t
 
 ## Privileges Configuration.
 
-- [Analytical Model DCL Scripts](sql/dcl/analytical-model)
+- [Analytical Model DCL Scripts](/sql/dcl/analytical-model)
 
 1. With the ROLE_CONFIGURATION_Production.sql script, use the following line to create the Production Database Role choosing a username and password:
 
