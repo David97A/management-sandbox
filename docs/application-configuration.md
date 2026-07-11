@@ -11,7 +11,7 @@ The application Data Model will store the following relevant information to enab
 
 We will not include in this table the passwords we configured for the database roles in each analytical instance, since we can store them in the pgpass.conf file. This is a secure strategy that we can follow to avoid declaring our passwords in the application code.
 
-[Application Model DDL Scripts](sql/ddl/application-model)
+[Application Model DDL Scripts](/sql/ddl/application-model)
 
 Once we have our Application's PostgreSQL instance running, we proceed to create its Data Model following the next instructions:
 
@@ -21,7 +21,7 @@ Once we have our Application's PostgreSQL instance running, we proceed to create
 
 ## Application Model - Inserting Users Information.
 
-[Application Model DML Scripts](sql/dml/application-model)
+[Application Model DML Scripts](/sql/dml/application-model)
 
 1. With the CREDENTIALS_CONFIGURATION.sql script, we're going to create the pgcrypto PostgreSQL extension and insert the user's authentication information. In the next line of the script:
 
@@ -113,7 +113,7 @@ if it logs in immediately, the pgpass file is working correctly.
 
 ## Configuring the Database Connections and Running the Application.
 
-[Application Source Code](src/)
+[Application Source Code](/src/)
 
 With all the previous requisites satisfied, the only configuration that is left to do is to modify the ```global.r``` to include the details of your Databases connections.
 
