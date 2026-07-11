@@ -160,7 +160,7 @@ declaring your user name in at the end of the WHERE clause filter.
 
 ### Storing the Database passwords in pgpass.
 
-Depending on whether you're working on a Windows or Linux/macOS Set up, the following steps will guide you through the configuration of the pgpass file to store the passwords of each analytical dabase securily:
+Depending on whether you're working on a Windows or Linux/macOS Set up, the following steps will guide you through the configuration of the pgpass file to store the passwords of each analytical dabase securily. Also we have to include the password of the ```postgres``` super user for the connection to the Application's Database ```SandBoxAppManagement``` (the one that you choose while installing the PostgreSQL version in your computer or while configuring the Docker container) so we don't have the need to declare it explicitly anywhere in the application code.
 
 #### Windows
 
@@ -174,6 +174,8 @@ Depending on whether you're working on a Windows or Linux/macOS Set up, the foll
 lochalhost:5432:bot-datacenter:username_production:password_production
 # Connection to Sandbox environment
 localhost:5433:bot-datacenter:username_sandbox:password_sandbox
+# Connection to the Application's Database to the postgresql User
+localhost:5434:SandboxAppManagement:postgres:postgres_password
 ```
 #### Linux / macOS
 
@@ -196,6 +198,8 @@ nano .pgpass
 lochalhost:5432:bot-datacenter:username_production:password_production
 # Connection to Sandbox environment
 localhost:5433:bot-datacenter:username_sandbox:password_sandbox
+# Connection to the Application's Database to the postgresql User
+localhost:5434:SandboxAppManagement:postgres:postgres_password
 ```
 
 4. Since Linux and macOS will ignore the pgpass file configuration if its permissions are too broad, we have to run the next command to restrict them:
@@ -206,12 +210,107 @@ chmod 0600 ~/.pgpass
 
 You can test the passwords configuration by connecting to each database using ```psql```:
 
+*Production Analytical Database*
+
 ``` bash
 psql -h localhost -p 5432 -d bot-datacenter  -U username_production
 ```
 
+*Sandbox Application Database*
+
+``` bash
+psql -h localhost -p 5434 -d SandboxAppManagement  -U postgres
+```
+
 if it logs in immediately, the pgpass file is working correctly.
 
+## Configuring the Database Connections and Running the Application.
+
+[Application Source Code](src/)
+
+With all the previous requisites satisfied, the only configuration that is left to do is to modify the ```global.r``` to include the details of your Databases connections.
+
+1. The connection parameters to the analytical Databases has to be included in the following lines (the ```configParamsDestinationConn``` has to be completed with the connection parameters to the Sandbox instance, while the ```configParamsSourceConn``` should include the Production instance's parameters):
+
+``` r
+#########################
+# Connections Parameters
+#########################
+
+configParamsDestinationConn <- list(
+  host = "localhost",
+  port = 5432,
+  dbname = "bot-datacenter"
+)
+configParamsSourceConn <- list(
+  host = "localhost",
+  port = 5433,
+  dbname = "bot-datacenter"
+)
+```
+
+2. The connection parameters corresponding to the Application's Database has to be included inside the ```getAppUsers``` function, wich has the logic to extract the Database Roles' information once the User has been authenticated.
+
+``` r
+getAppUsers <- function () {
+  
+  adminAppUsersConnection <- dbConnect(
+    RPostgres::Postgres(),
+    host = "localhost",
+    port = 5434,
+    dbname = "SandBoxAppManagement",
+    user = "postgres"
+  )
+  
+  users <- dbGetQuery(adminAppUsersConnection,
+                      '
+SELECT
+  "Username" AS user,
+  pgp_sym_decrypt("Password_hash"::bytea, \'public-password\') as password,
+  "Role",
+  "Active",
+  "SandBoxDBRole",
+  "ProductionDBRole"
+FROM "AdminManagement"."Sandbox_App_Users"
+    '
+  )
+  
+  dbDisconnect(adminAppUsersConnection)
+  
+  users
+}
+```
+
+With this last changes, the application is ready to be tested. You can run it with the following command (adapting it to your own path):
+
+``` r
+library(shiny)
+
+runApp(
+  appDir = "/management-sandbox/src", 
+  host = "0.0.0.0", 
+  port = 5050
+)
+```
+note that, the three source files (```ui.r```, ```server.r```, ```global.r```) need to be allocated in the same folder ```src```, with the css file inside the ```www``` folder.
+
+## Functionalities
+
+For this first deliverable, the functionalities included are:
+
+1. Authentication Module.
+
+2. Validation Process. Before running the data replication, the application validates that in both servers the Tables has the same structure (number of columns, names, column data types, etc).
+
+3. Replication Process, with a pop-up requesting confirmation before start running the process and another pop-up after the replication is finished to display a summary of the records replicated, time of execution, etc.
+
+
+## Feedback
+
+As this is my first project, you can encounter a lot of oportunity areas that can be enhanced, so any thoughts, suggestions, feedback and recomendations are more than welcome.
+If you run into any issues, have a question, or want to suggest an improvement, please feel free to [open an issue](https://github.com/David97A) or reach out to me directly at [my email](mailto:davidaguirredataanalyst101@gmail.com).
+
+Thanks for reading.
 
 ## References
 
